@@ -14,7 +14,7 @@ main_window = QWidget()
 main_window.setWindowTitle("Science Notes")
 main_window.resize(1000, 800)
 
-###########Objects###########
+###########   Objects   ###########
 
 notions_lbl = QLabel("Замітки")
 tags_lbl = QLabel("Теги")
