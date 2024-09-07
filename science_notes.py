@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout,
     QListWidget, QTextEdit,
     QLineEdit, QInputDialog,
-    QMessageBox
 )
+from PyQt5.QtWidgets import QMessageBox
 
 app = QApplication(sys.argv)
 
@@ -68,6 +68,12 @@ right_button_layout2.addWidget(unpin_note_tag)
 main_layout.addLayout(right_layout)
 
 ############   functions   ############
+def create_error():
+    error_box = QMessageBox()
+    error_box.setWindowTitle("Error")
+    error_box.setText("You did not select any note.")
+    error_box.setIcon(QMessageBox.Warning)
+    error_box.exec_()
 def show_notes():
     name = list_of_notes.selectedItems()[0].text()
     note_text_edit.setText(notes[name]["text"])
@@ -81,16 +87,32 @@ def add_note():
     if ok and note_name != "":
         notes[note_name] = {"text": "", "tags": []}
         list_of_notes.addItem(note_name)
-        print(notes)
 
 def save_note():
     if list_of_notes.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         notes[key]["text"] = note_text_edit.toPlainText()
+        with open("notes_data.json", 'w', encoding="utf-8") as f:
+            json.dump(notes, f, sort_keys=True, indent=2)
+
+    else:
+        create_error()
+
+def delete_note():
+    if list_of_notes.selectedItems():
+        key = list_of_notes.selectedItems()[0].text()
+        del notes[key]
+        list_of_notes.selectedItems().clear()
+        with open("notes_data.json", 'w', encoding="utf-8") as f:
+            json.dump(notes, f, sort_keys=True, indent=2)
+        print(notes)
+    else:
+        create_error()
 
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
 save_note_btn.clicked.connect(save_note)
+delete_note_btn.clicked.connect(delete_note)
 
 main_window.setLayout(main_layout)
 main_window.show()
