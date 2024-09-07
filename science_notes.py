@@ -24,12 +24,13 @@ notions_lbl = QLabel("Замітки")
 tags_lbl = QLabel("Теги")
 
 #   buttons
-create_note_btn = QPushButton("Створити замітку")
-delete_note_btn = QPushButton("Видалити замітку")
-save_note_btn = QPushButton("Зберегти")
-add_tag_btn = QPushButton("Додати до замітки")
-unpin_note_tag = QPushButton("Відкріпити замітку")
-search_by_tag_btn = QPushButton("Знайти за тегом")
+create_note_btn = QPushButton("Create new note")
+delete_note_btn = QPushButton("Delete note")
+save_note_btn = QPushButton("Save note")
+rename_note_btn = QPushButton("Rename note")
+add_tag_btn = QPushButton("Add tag")
+unpin_note_tag = QPushButton("Delete tag")
+search_by_tag_btn = QPushButton("Search by tag")
 
 #  lists
 list_of_notes = QListWidget()
@@ -38,7 +39,7 @@ tags_list = QListWidget()
 
 note_text_edit = QTextEdit()
 tag_input = QLineEdit()
-tag_input.setPlaceholderText("Введіть тег:")
+tag_input.setPlaceholderText("Type tag:")
 
 #   layouts
 main_layout = QHBoxLayout()
@@ -53,6 +54,7 @@ right_button_layout.addWidget(create_note_btn)
 right_button_layout.addWidget(delete_note_btn)
 
 right_layout.addWidget(save_note_btn)
+right_layout.addWidget(rename_note_btn)
 right_layout.addLayout(right_button_layout)
 right_layout.addWidget(tags_lbl)
 right_layout.addWidget(tags_list)
@@ -82,7 +84,7 @@ def show_notes():
 
 def add_note():
     note_name, ok = QInputDialog.getText(
-        main_window, "Додати замітку?", "Назва:"
+        main_window, "Add Note?", "Name:"
     )
     if ok and note_name != "":
         notes[note_name] = {"text": "", "tags": []}
@@ -102,17 +104,32 @@ def delete_note():
     if list_of_notes.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         del notes[key]
-        list_of_notes.selectedItems().clear()
+        list_of_notes.clear()
+        tags_list.clear()
         with open("notes_data.json", 'w', encoding="utf-8") as f:
             json.dump(notes, f, sort_keys=True, indent=2)
-        print(notes)
+        list_of_notes.addItems(notes)
     else:
         create_error()
+
+def rename_note():
+    if list_of_notes.selectedItems():
+        key = list_of_notes.selectedItems()[0].text()
+        new_name, ok = QInputDialog.getText(
+            main_window, "Rename note?", "New name:"
+        )
+        if ok and new_name != "":
+            notes[new_name] = notes.pop(key)
+            list_of_notes.clear()
+            with open("notes_data.json", 'w', encoding="utf-8") as f:
+                json.dump(notes, f, sort_keys=True, indent=2)
+            list_of_notes.addItems(notes)
 
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
 save_note_btn.clicked.connect(save_note)
 delete_note_btn.clicked.connect(delete_note)
+rename_note_btn.clicked.connect(rename_note)
 
 main_window.setLayout(main_layout)
 main_window.show()
