@@ -43,22 +43,28 @@ tag_input.setPlaceholderText("Введіть тег:")
 #   layouts
 main_layout = QHBoxLayout()
 main_layout.addWidget(note_text_edit)
+
 right_layout = QVBoxLayout()
 right_layout.addWidget(notions_lbl)
 right_layout.addWidget(list_of_notes)
+
 right_button_layout = QHBoxLayout()
 right_button_layout.addWidget(create_note_btn)
 right_button_layout.addWidget(delete_note_btn)
+
 right_layout.addWidget(save_note_btn)
 right_layout.addLayout(right_button_layout)
 right_layout.addWidget(tags_lbl)
 right_layout.addWidget(tags_list)
 right_layout.addWidget(tag_input)
+
 right_button_layout2 = QHBoxLayout()
 right_button_layout2.addWidget(add_tag_btn)
+
 right_layout.addWidget(search_by_tag_btn)
 right_layout.addLayout(right_button_layout2)
 right_button_layout2.addWidget(unpin_note_tag)
+
 main_layout.addLayout(right_layout)
 
 ############   functions   ############
@@ -75,10 +81,16 @@ def add_note():
     if ok and note_name != "":
         notes[note_name] = {"text": "", "tags": []}
         list_of_notes.addItem(note_name)
+        print(notes)
+
+def save_note():
+    if list_of_notes.selectedItems():
+        key = list_of_notes.selectedItems()[0].text()
+        notes[key]["text"] = note_text_edit.toPlainText()
 
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
-# save_note_btn.clicked.connect(save_note)
+save_note_btn.clicked.connect(save_note)
 
 main_window.setLayout(main_layout)
 main_window.show()
