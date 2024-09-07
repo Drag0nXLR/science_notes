@@ -124,6 +124,8 @@ def rename_note():
             with open("notes_data.json", 'w', encoding="utf-8") as f:
                 json.dump(notes, f, sort_keys=True, indent=2)
             list_of_notes.addItems(notes)
+    else:
+        create_error()
 
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
