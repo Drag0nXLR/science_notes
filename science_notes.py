@@ -1,4 +1,4 @@
-# from PyQt5.QtCore import Qt
+"""Import packages"""
 import json
 import sys
 from PyQt5.QtWidgets import (
@@ -12,10 +12,12 @@ from PyQt5.QtWidgets import QMessageBox
 
 app = QApplication(sys.argv)
 
+"""Creating a window"""
 main_window = QWidget()
 main_window.setWindowTitle("Science Notes")
 main_window.resize(1000, 800)
-with open("notes_data.json", 'r', encoding="utf-8") as f:
+
+with open("notes_data.json", 'r', encoding="utf-8") as f:    #Opens file
     notes = json.load(f)
 
 ###########   Objects   ###########
@@ -71,18 +73,21 @@ main_layout.addLayout(right_layout)
 
 ############   functions   ############
 def create_error():
+    """Creates an error message and shows it."""
     error_box = QMessageBox()
     error_box.setWindowTitle("Error")
     error_box.setText("You did not select anything.")
     error_box.setIcon(QMessageBox.Warning)
     error_box.exec_()
 def show_notes():
+    """Shows the note tags and the note text."""
     name = list_of_notes.selectedItems()[0].text()
     note_text_edit.setText(notes[name]["text"])
     tags_list.clear()
     tags_list.addItems(notes[name]["tags"])
 
 def add_note():
+    """Creates a new note and adds it to the file."""
     note_name, ok = QInputDialog.getText(
         main_window, "Add Note?", "Name:"
     )
@@ -91,6 +96,7 @@ def add_note():
         list_of_notes.addItem(note_name)
 
 def save_note():
+    """Saves your note to file."""
     if list_of_notes.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         notes[key]["text"] = note_text_edit.toPlainText()
@@ -101,6 +107,7 @@ def save_note():
         create_error()
 
 def delete_note():
+    """Deletes your note."""
     if list_of_notes.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         del notes[key]
@@ -115,6 +122,7 @@ def delete_note():
         create_error()
 
 def rename_note():
+    """Helps you to rename note."""
     if list_of_notes.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         new_name, ok = QInputDialog.getText(
@@ -131,6 +139,7 @@ def rename_note():
         create_error()
 
 def add_tag():
+    """Helps you to add a tag."""
     if list_of_notes.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         new_tag, ok = QInputDialog.getText(
@@ -147,6 +156,7 @@ def add_tag():
         create_error()
 
 def delete_tag():
+    """Helps you to delete a tag."""
     if tags_list.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         tag = tags_list.selectedItems()[0].text()
@@ -162,6 +172,7 @@ def delete_tag():
         create_error()
 
 def search_by_tag():
+    """Helps you to search for a note by tag."""
     tag = tag_input.text()
     if search_by_tag_btn.text() == "Search by tag" and tag:
         notes_filtered = {}
@@ -187,6 +198,7 @@ def search_by_tag():
         msg.setText("The text field is empty.")
         msg.exec_()
 
+"""Connects functions to buttons."""
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
 save_note_btn.clicked.connect(save_note)
@@ -198,5 +210,5 @@ search_by_tag_btn.clicked.connect(search_by_tag)
 
 main_window.setLayout(main_layout)
 main_window.show()
-if __name__ == '__main__':
+if __name__ == '__main__':   #Starts the project
     sys.exit(app.exec_())
