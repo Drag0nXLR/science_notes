@@ -162,8 +162,30 @@ def delete_tag():
         create_error()
 
 def search_by_tag():
-    if tag_input != "":
-        pass
+    tag = tag_input.text()
+    if search_by_tag_btn.text() == "Search by tag" and tag:
+        notes_filtered = {}
+        for note in notes:
+            if tag in notes[note]["tags"]:
+                notes_filtered[note] = notes[note]
+        search_by_tag_btn.setText("Reset")
+        list_of_notes.clear()
+        tags_list.clear()
+        list_of_notes.addItems(notes_filtered)
+    elif search_by_tag_btn.text() == "Reset":
+        search_by_tag_btn.setText("Search by tag")
+        tags_list.clear()
+        tag_input.clear()
+        list_of_notes.clear()
+        list_of_notes.addItems(notes)
+        search_by_tag_btn.setText("Search by tag")
+
+    else:
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setWindowTitle("Error")
+        msg.setText("The text field is empty.")
+        msg.exec_()
 
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
@@ -172,6 +194,7 @@ delete_note_btn.clicked.connect(delete_note)
 rename_note_btn.clicked.connect(rename_note)
 add_tag_btn.clicked.connect(add_tag)
 unpin_note_tag.clicked.connect(delete_tag)
+search_by_tag_btn.clicked.connect(search_by_tag)
 
 main_window.setLayout(main_layout)
 main_window.show()
