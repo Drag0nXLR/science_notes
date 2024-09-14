@@ -20,8 +20,8 @@ with open("notes_data.json", 'r', encoding="utf-8") as f:
 
 ###########   Objects   ###########
 #   labels
-notions_lbl = QLabel("Замітки")
-tags_lbl = QLabel("Теги")
+notions_lbl = QLabel("Notes")
+tags_lbl = QLabel("Tags")
 
 #   buttons
 create_note_btn = QPushButton("Create new note")
@@ -52,9 +52,9 @@ right_layout.addWidget(list_of_notes)
 right_button_layout = QHBoxLayout()
 right_button_layout.addWidget(create_note_btn)
 right_button_layout.addWidget(delete_note_btn)
+right_button_layout.addWidget(save_note_btn)
+right_button_layout.addWidget(rename_note_btn)
 
-right_layout.addWidget(save_note_btn)
-right_layout.addWidget(rename_note_btn)
 right_layout.addLayout(right_button_layout)
 right_layout.addWidget(tags_lbl)
 right_layout.addWidget(tags_list)
@@ -73,7 +73,7 @@ main_layout.addLayout(right_layout)
 def create_error():
     error_box = QMessageBox()
     error_box.setWindowTitle("Error")
-    error_box.setText("You did not select any note.")
+    error_box.setText("You did not select anything.")
     error_box.setIcon(QMessageBox.Warning)
     error_box.exec_()
 def show_notes():
@@ -106,9 +106,11 @@ def delete_note():
         del notes[key]
         list_of_notes.clear()
         tags_list.clear()
+        note_text_edit.clear()
         with open("notes_data.json", 'w', encoding="utf-8") as f:
             json.dump(notes, f, sort_keys=True, indent=2)
         list_of_notes.addItems(notes)
+
     else:
         create_error()
 
@@ -124,14 +126,52 @@ def rename_note():
             with open("notes_data.json", 'w', encoding="utf-8") as f:
                 json.dump(notes, f, sort_keys=True, indent=2)
             list_of_notes.addItems(notes)
+
     else:
         create_error()
+
+def add_tag():
+    if list_of_notes.selectedItems():
+        key = list_of_notes.selectedItems()[0].text()
+        new_tag, ok = QInputDialog.getText(
+            main_window, "Add tag?", "New tag:"
+        )
+        if ok and new_tag != "":
+            notes[key]["tags"].append(new_tag)
+            tags_list.clear()
+            tags_list.addItems(notes[key]["tags"])
+            with open("notes_data.json", 'w', encoding="utf-8") as f:
+                json.dump(notes, f, sort_keys=True, indent=2)
+
+    else:
+        create_error()
+
+def delete_tag():
+    if tags_list.selectedItems():
+        key = list_of_notes.selectedItems()[0].text()
+        tag = tags_list.selectedItems()[0].text()
+        notes[key]["tags"].remove(tag)
+
+        with open("notes_data.json", 'w', encoding="utf-8") as f:
+            json.dump(notes, f, sort_keys=True, indent=2)
+
+        tags_list.clear()
+        tags_list.addItems(notes[key]["tags"])
+
+    else:
+        create_error()
+
+def search_by_tag():
+    if tag_input != "":
+        pass
 
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
 save_note_btn.clicked.connect(save_note)
 delete_note_btn.clicked.connect(delete_note)
 rename_note_btn.clicked.connect(rename_note)
+add_tag_btn.clicked.connect(add_tag)
+unpin_note_tag.clicked.connect(delete_tag)
 
 main_window.setLayout(main_layout)
 main_window.show()
