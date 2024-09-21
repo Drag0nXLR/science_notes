@@ -20,7 +20,7 @@ main_window.resize(1000, 800)
 with open("notes_data.json", 'r', encoding="utf-8") as f:    #Opens file
     notes = json.load(f)
 
-###########   Objects   ###########
+"""         Objects         """
 #   labels
 notions_lbl = QLabel("Notes")
 tags_lbl = QLabel("Tags")
@@ -39,6 +39,7 @@ list_of_notes = QListWidget()
 list_of_notes.addItems(notes)
 tags_list = QListWidget()
 
+#  inputs
 note_text_edit = QTextEdit()
 tag_input = QLineEdit()
 tag_input.setPlaceholderText("Type tag:")
@@ -99,8 +100,8 @@ def add_note():
 def save_note():
     """Saves your note to file."""
     if list_of_notes.selectedItems():
-        key = list_of_notes.selectedItems()[0].text()
-        notes[key]["text"] = note_text_edit.toPlainText()
+        key = list_of_notes.selectedItems()[0].text() #  pick a key
+        notes[key]["text"] = note_text_edit.toPlainText()  # save text
         with open("notes_data.json", 'w', encoding="utf-8") as f:
             json.dump(notes, f, sort_keys=True, indent=2)
 
@@ -109,15 +110,15 @@ def save_note():
 
 def delete_note():
     """Deletes your note."""
-    if list_of_notes.selectedItems():
-        key = list_of_notes.selectedItems()[0].text()
-        del notes[key]
-        list_of_notes.clear()
+    if list_of_notes.selectedItems():  #  check
+        key = list_of_notes.selectedItems()[0].text()  #  pick a key
+        del notes[key]  #  delete note
+        list_of_notes.clear()  #  update lists
         tags_list.clear()
         note_text_edit.clear()
         with open("notes_data.json", 'w', encoding="utf-8") as f:
             json.dump(notes, f, sort_keys=True, indent=2)
-        list_of_notes.addItems(notes)
+        list_of_notes.addItems(notes)  #  update
 
     else:
         create_error()
@@ -144,12 +145,12 @@ def add_tag():
     if list_of_notes.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         new_tag, ok = QInputDialog.getText(
-            main_window, "Add tag?", "New tag:"
+            main_window, "Add tag?", "New tag:"     #   shows an input dialog to name a tag
         )
-        if ok and new_tag != "":
+        if ok and new_tag != "":   # checks if you pressed ok button and name isn`t empty
             notes[key]["tags"].append(new_tag)
             tags_list.clear()
-            tags_list.addItems(notes[key]["tags"])
+            tags_list.addItems(notes[key]["tags"])    #    creates new tag
             with open("notes_data.json", 'w', encoding="utf-8") as f:
                 json.dump(notes, f, sort_keys=True, indent=2)
 
@@ -161,7 +162,7 @@ def delete_tag():
     if tags_list.selectedItems():
         key = list_of_notes.selectedItems()[0].text()
         tag = tags_list.selectedItems()[0].text()
-        notes[key]["tags"].remove(tag)
+        notes[key]["tags"].remove(tag)   #   deletes tag from list
 
         with open("notes_data.json", 'w', encoding="utf-8") as f:
             json.dump(notes, f, sort_keys=True, indent=2)
@@ -200,6 +201,7 @@ def search_by_tag():
         msg.exec_()
 
 """Connects functions to buttons."""
+
 create_note_btn.clicked.connect(add_note)
 list_of_notes.itemClicked.connect(show_notes)
 save_note_btn.clicked.connect(save_note)
