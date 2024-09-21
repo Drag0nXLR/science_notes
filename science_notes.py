@@ -79,6 +79,7 @@ def create_error():
     error_box.setText("You did not select anything.")
     error_box.setIcon(QMessageBox.Warning)
     error_box.exec_()
+
 def show_notes():
     """Shows the note tags and the note text."""
     name = list_of_notes.selectedItems()[0].text()

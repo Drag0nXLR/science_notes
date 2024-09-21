@@ -5,8 +5,8 @@
     ],
     "text": "How to use this app:\n\n1. Press the \"Create new note\" button to create a new note\n2. To save note, press the \"Save\" button\n3. To delete note, press the \"Delete\" button\n4. To add tag, press the \"Add tag\" button\n5. To find tag, use the text field \"Type tag\" and press Search by tag\n6. To delete tag, press \"Delete tag\" button\n7. To rename note, select note, and press \"Rename note\" button\n\nI think, that it will be might easy, so, good luck!"
   },
-  "Note": {
+  "Test": {
     "tags": [],
-    "text": "Type here"
+    "text": ""
   }
 }
